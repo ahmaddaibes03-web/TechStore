@@ -121,7 +121,7 @@ pipeline {
         }
 
         // ── 8. DEPLOY ───────────────────────────────────────────
-        stage('Deploy') {
+       stage('Deploy') {
             steps {
                 sh """
                     # Eski konteyneri durdur
@@ -129,11 +129,11 @@ pipeline {
                     docker rm techstore-app 2>/dev/null || true
 
                     # Yeni versiyonu başlat
-                    docker run -d \
-                        --name techstore-app \
-                        --restart unless-stopped \
-                        -p 5000:5000 \
-                        ${DOCKER_HUB_USER}/${DOCKER_IMAGE}:latest
+                    docker run -d \\
+                        --name techstore-app \\
+                        --restart unless-stopped \\
+                        -p 5000:5000 \\
+                        ahmaddaibes03/techstore-app:latest
 
                     echo "⏳ Sağlık kontrolü bekleniyor..."
                     sleep 10
