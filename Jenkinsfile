@@ -143,26 +143,26 @@ pipeline {
 
         // ── 9. SMOKE TEST ───────────────────────────────────────
         stage('Smoke Test') {
-            steps {
-                sh '''
-                    # /health endpoint kontrol
-                    STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/health)
-                    if [ "$STATUS" != "200" ]; then
-                        echo "❌ Smoke test başarısız! HTTP: $STATUS"
-                        exit 1
-                    fi
+    steps {
+        sh '''
+            # /health endpoint kontrol
+            STATUS=$(curl -s -o /dev/null -w "%{http_code}" http://192.168.1.111:5000/health)
+            if [ "$STATUS" != "200" ]; then
+                echo "❌ Smoke test başarısız! HTTP: $STATUS"
+                exit 1
+            fi
 
-                    # Ana sayfa kontrol
-                    STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://localhost:5000/)
-                    if [ "$STATUS2" != "200" ]; then
-                        echo "❌ Ana sayfa erişilemiyor! HTTP: $STATUS2"
-                        exit 1
-                    fi
+            # Ana sayfa kontrol
+            STATUS2=$(curl -s -o /dev/null -w "%{http_code}" http://192.168.1.111:5000/)
+            if [ "$STATUS2" != "200" ]; then
+                echo "❌ Ana sayfa erişilemiyor! HTTP: $STATUS2"
+                exit 1
+            fi
 
-                    echo "✅ Smoke testleri geçildi"
-                '''
-            }
-        }
+            echo "✅ Smoke testleri geçildi"
+        '''
+    }
+}
 
         // ── 10. UI TESTLERİ ─────────────────────────────────────
         stage('UI Tests') {
