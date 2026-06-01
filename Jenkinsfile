@@ -35,43 +35,45 @@ pipeline {
         // ── 3. BİRİM TESTLERİ ──────────────────────────────────
         stage('Unit Tests') {
             steps {
+                echo "✅ تشغيل الاختبارات وتوليد ملفات التغطية..."
                 sh '''
                     . venv/bin/activate
-                    pytest tests/test_app.py \
-                        -v \
-                        --tb=short \
-                        --junit-xml=test-results/unit-tests.xml \
-                        --cov=app \
-                        --cov-report=xml:coverage.xml \
-                        --cov-report=term-missing
+                    pytest tests/test_app.py -v --junit-xml=test-results/unit-tests.xml --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
                 '''
             }
             post {
                 always {
+                    // أرشفة نتائج الاختبارات والتغطية ليقرأها Jenkins
                     junit 'test-results/unit-tests.xml'
-                    publishCoverage adapters: [coberturaAdapter('coverage.xml')]
+                    publishCoverage adapters: [cobertura('coverage.xml')]
                 }
             }
         }
-
         // ── 4. KOD KALİTE ANALİZİ ──────────────────────────────
         stage('SonarQube Analysis') {
             steps {
-                withSonarQubeEnv('SonarQube') {
-                    sh '''
-                        . venv/bin/activate
-                        sonar-scanner \
-                            -Dsonar.projectKey=techstore \
-                            -Dsonar.projectName="TechStore E-Commerce" \
-                            -Dsonar.sources=. \
-                            -Dsonar.exclusions=venv/**,tests/**,**/__pycache__/** \
-                            -Dsonar.python.coverage.reportPaths=coverage.xml \
-                            -Dsonar.host.url=${SONAR_HOST} \
-                            -Dsonar.login=${SONAR_TOKEN}
-                    '''
+                echo "✅ تحليل الكود عبر SonarQube..."
+                script {
+                    // استدعاء الأداة التي أضفناها في Jenkins
+                    def scannerHome = tool name: 'sonar-scanner', type: 'hudson.plugins.sonar.SonarRunnerInstallation'
+                    
+                    // الاتصال بـ SonarQube باستخدام الإعدادات المحفوظة في Jenkins
+                    withSonarQubeEnv('SonarQube') {
+                        sh """
+                            . venv/bin/activate
+                            ${scannerHome}/bin/sonar-scanner \
+                                -Dsonar.projectKey=techstore \
+                                -Dsonar.projectName="TechStore E-Commerce" \
+                                -Dsonar.sources=. \
+                                -Dsonar.exclusions=venv/**,tests/**,**/__pycache__/** \
+                                -Dsonar.python.coverage.reportPaths=coverage.xml
+                        """
+                    }
                 }
             }
         }
+    }
+}
 
         // ── 5. KALİTE KAPISI ───────────────────────────────────
         stage('Quality Gate') {
