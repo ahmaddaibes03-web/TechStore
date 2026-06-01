@@ -38,14 +38,17 @@ pipeline {
                 echo "✅ تشغيل الاختبارات وتوليد ملفات التغطية..."
                 sh '''
                     . venv/bin/activate
+                    export PYTHONPATH=.
                     pytest tests/test_app.py -v --junit-xml=test-results/unit-tests.xml --cov=app --cov-report=xml:coverage.xml --cov-report=term-missing
                 '''
             }
             post {
                 always {
-                    // أرشفة نتائج الاختبارات والتغطية ليقرأها Jenkins
+                    // أرشفة نتائج الاختبارات
                     junit 'test-results/unit-tests.xml'
-                    publishCoverage adapters: [cobertura('coverage.xml')]
+                    
+                    // قراءة التغطية بالصيغة الصحيحة لإضافة Cobertura
+                    cobertura coberturaReportFile: 'coverage.xml'
                 }
             }
         }
