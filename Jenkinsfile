@@ -33,7 +33,7 @@ pipeline {
         }
 
         // ── 3. BİRİM TESTLERİ ──────────────────────────────────
-        stage('Unit Tests') {
+       stage('Unit Tests') {
             steps {
                 echo "✅ تشغيل الاختبارات وتوليد ملفات التغطية..."
                 sh '''
@@ -44,11 +44,8 @@ pipeline {
             }
             post {
                 always {
-                    // أرشفة نتائج الاختبارات
+                    // أرشفة نتائج الاختبارات فقط
                     junit 'test-results/unit-tests.xml'
-                    
-                    // قراءة التغطية بالصيغة الصحيحة لإضافة Cobertura
-                    cobertura coberturaReportFile: 'coverage.xml'
                 }
             }
         }
@@ -196,7 +193,7 @@ pipeline {
         }
         failure {
             echo "❌ Pipeline başarısız!"
-            slackSend(
+           // slackSend(
                 channel: env.SLACK_CHANNEL,
                 color: 'danger',
                 message: """
