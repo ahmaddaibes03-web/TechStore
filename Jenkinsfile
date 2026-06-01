@@ -73,7 +73,7 @@ pipeline {
             }
         }
     }
-}
+
 
         // ── 5. KALİTE KAPISI ───────────────────────────────────
         stage('Quality Gate') {
