@@ -194,16 +194,16 @@ pipeline {
         failure {
             echo "❌ Pipeline başarısız!"
            // slackSend(
-                channel: env.SLACK_CHANNEL,
-                color: 'danger',
-                message: """
-❌ *TechStore Deploy Başarısız*
-• Branch: `${env.BRANCH_NAME}`
-• Build: `#${env.BUILD_NUMBER}`
-• Aşama: ${env.STAGE_NAME}
-• Detay: ${env.BUILD_URL}console
-                """
-            )
+               // channel: env.SLACK_CHANNEL,
+               // color: 'danger',
+              //  message: """
+//❌ *TechStore Deploy Başarısız*
+//• Branch: `${env.BRANCH_NAME}`
+//• Build: `#${env.BUILD_NUMBER}`
+//• Aşama: ${env.STAGE_NAME}
+//• Detay: ${env.BUILD_URL}console
+           //     """
+         //   )
         }
         always {
             // Eski imajları temizle (son 3'ü tut)
